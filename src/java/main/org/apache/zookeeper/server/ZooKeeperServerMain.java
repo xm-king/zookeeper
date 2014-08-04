@@ -88,14 +88,14 @@ public class ZooKeeperServerMain {
         } catch (JMException e) {
             LOG.warn("Unable to register log4j JMX control", e);
         }
-
+        //加载配置
         ServerConfig config = new ServerConfig();
         if (args.length == 1) {
             config.parse(args[0]);
         } else {
             config.parse(args);
         }
-
+        //启动ZookeeperServer
         runFromConfig(config);
     }
 
@@ -113,6 +113,7 @@ public class ZooKeeperServerMain {
             // so rather than spawning another thread, we will just call
             // run() in this thread.
             // create a file logger url from the command line args
+        	//日志目录以及快照文件目录
             txnLog = new FileTxnSnapLog(config.dataLogDir, config.dataDir);
             ZooKeeperServer zkServer = new ZooKeeperServer( txnLog,
                     config.tickTime, config.minSessionTimeout, config.maxSessionTimeout, null);
@@ -121,7 +122,7 @@ public class ZooKeeperServerMain {
             adminServer = AdminServerFactory.createAdminServer();
             adminServer.setZooKeeperServer(zkServer);
             adminServer.start();
-
+            //默认为NIOServerCnxnFactory
             cnxnFactory = ServerCnxnFactory.createFactory();
             cnxnFactory.configure(config.getClientPortAddress(),
                     config.getMaxClientCnxns());
